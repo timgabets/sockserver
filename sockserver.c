@@ -53,8 +53,6 @@ void* start_server(void* args){
      pthread_mutex_unlock( &(data->mutex) );
      close(sockfd);
      return NULL;
-  } else {
-     printf("listening on port 29493, fd: %d\n", sockfd);
   }
 
   struct sockaddr_in client_address;
@@ -73,7 +71,6 @@ void* start_server(void* args){
  * @return [description]
  */
 int start_client(){
-  printf("Starting client\n");
   int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(sock_fd < 0)
   {
@@ -113,7 +110,6 @@ void getFDs(int* server_fd, int* client_fd){
   }
 
   pthread_mutex_lock( &(data.mutex) );
-  sleep(1);
   *client_fd = start_client();
 
   sleep(1);
