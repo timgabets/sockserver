@@ -91,7 +91,10 @@ int main(int argc, char * argv[]){
   int server_fd = -1914;
 
   if( pthread_create(&thread_id, NULL, &start_server, &server_fd) != 0)
+  {
     printf("pthread_create error\n");
+    return -1;
+  }
 
   sleep(1);
 
@@ -103,5 +106,6 @@ int main(int argc, char * argv[]){
   printf("Server fd: %d\n", server_fd);
 
   close(client_fd);
+  close(server_fd);
   return 0;
 }
