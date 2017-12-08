@@ -6,13 +6,18 @@
 #include <pthread.h>
 #include <unistd.h>
 
+typedef struct {
+  int fd;
+  pthread_mutex_t mutex;
+} shared_data;
+
 
 /**
  * [start_server description]
  * @param arg [description]
  */
-void* start_server(void* data){
-  int* fd = (int*) data;
+void* start_server(void* args){
+  shared_data* data = (shared_data*) args;
 
   printf("starting server\n");
 
@@ -44,7 +49,7 @@ void* start_server(void* data){
 
   struct sockaddr_in client_address;
   socklen_t client_address_len = 0;
-  *fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
+  data->fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
   
   // Returning file descriptor value in fd  
   pthread_exit(NULL);
@@ -88,9 +93,11 @@ int start_client(){
  */
 int main(int argc, char * argv[]){
   pthread_t thread_id;
-  int server_fd = -1914;
+  shared_data data;
+  data.fd = -1914;
+  data.mutex = PTHREAD_MUTEX_INITIALIZER;
 
-  if( pthread_create(&thread_id, NULL, &start_server, &server_fd) != 0)
+  if( pthread_create(&thread_id, NULL, &start_server, &data) != 0)
   {
     printf("pthread_create error\n");
     return -1;
@@ -103,9 +110,9 @@ int main(int argc, char * argv[]){
   sleep(1);
 
   printf("Client fd: %d\n", client_fd);
-  printf("Server fd: %d\n", server_fd);
+  printf("Server fd: %d\n", data.fd);
 
   close(client_fd);
-  close(server_fd);
+  close(data.fd);
   return 0;
 }
