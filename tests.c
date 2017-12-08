@@ -6,11 +6,13 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+int port = 19443;
+
 TEST_CASE( "should receive file descriptors", "" ) {
   int server_fd = -1;
   int client_fd = -1;
 
-  getFDs(&server_fd, &client_fd);
+  getFDs(port, &server_fd, &client_fd);
   
   REQUIRE( server_fd != -1 );
   REQUIRE( client_fd != -1 );
@@ -26,7 +28,7 @@ TEST_CASE( "should be able to exchange data with the given file descriptors", ""
   int server_fd = -1;
   int client_fd = -1;
   
-  getFDs(&server_fd, &client_fd);
+  getFDs(port, &server_fd, &client_fd);
   
   REQUIRE( server_fd != -1 );
   REQUIRE( client_fd != -1 );
@@ -50,7 +52,7 @@ TEST_CASE( "5 consecutive calls should receive should be successfull", "" ) {
     int server_fd = -1;
     int client_fd = -1;
 
-    getFDs(&server_fd, &client_fd);
+    getFDs(port, &server_fd, &client_fd);
   
     REQUIRE( server_fd != -1 );
     REQUIRE( client_fd != -1 );

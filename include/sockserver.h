@@ -1,1 +1,1 @@
-void getFDs(int*, int*);
+void getFDs(const int, int*, int*);

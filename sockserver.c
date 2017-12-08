@@ -11,6 +11,7 @@
 
 typedef struct {
   int fd;
+  int port;
   pthread_mutex_t mutex;
 } shared_data;
 
@@ -37,7 +38,7 @@ void* start_server(void* args){
   struct sockaddr_in sa;
   memset(&sa, 0, sizeof(sa));
   sa.sin_family = AF_INET;
-  sa.sin_port = htons(29493);
+  sa.sin_port = htons(data->port);
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
   if ((bind(sockfd, (struct sockaddr *)&sa, sizeof(sa))) < 0) {
@@ -70,7 +71,7 @@ void* start_server(void* args){
  * [start_client description]
  * @return [description]
  */
-int start_client(){
+int start_client(int port){
   int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(sock_fd < 0)
   {
@@ -81,7 +82,7 @@ int start_client(){
   struct sockaddr_in sa;
   memset(&sa, 0, sizeof(sa));
   sa.sin_family = AF_INET;
-  sa.sin_port = htons(29493);
+  sa.sin_port = htons(port);
 
   const char* server_name = "localhost";
   inet_pton(AF_INET, server_name, &sa.sin_addr);
@@ -96,9 +97,10 @@ int start_client(){
   return sock_fd;
 }
 
-void getFDs(int* server_fd, int* client_fd){
+void getFDs(const int port, int* server_fd, int* client_fd){
   pthread_t thread_id;
   shared_data data;
+  data.port = port; 
   data.fd = -1914;
   data.mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -110,7 +112,7 @@ void getFDs(int* server_fd, int* client_fd){
   }
 
   pthread_mutex_lock( &(data.mutex) );
-  *client_fd = start_client();
+  *client_fd = start_client(port);
 
   usleep(1000);
 
