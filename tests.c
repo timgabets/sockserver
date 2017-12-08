@@ -1,6 +1,5 @@
-#include "catch.hpp"
-
-#include "sockserver.h"
+#include "include/catch.hpp"
+#include "include/sockserver.h"
 
 #include <unistd.h>
 
