@@ -2,10 +2,21 @@ CC=g++
 CFLAGS=-std=c++11 -g
 LDFLAGS=-pthread
 
-SERVER=sockserver
+SRV=sockserver
+MAIN=tests-main
+TESTS=tests
 
-all:
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SERVER).c -o $(SERVER)
+$(MAIN).o:
+	$(CC) $(MAIN).cpp -c
 
+$(SRV).o:
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SRV).c -c
+
+test: $(MAIN).o $(SRV).o
+	$(CC) $(LDFLAGS) $(MAIN).o $(SRV).o $(TESTS).cpp -o $(TESTS)
+	time ./$(TESTS)
+
+all: test
+	
 clean:
-	@rm -f $(SERVER) $(CLIENT)
+	@rm -f *.o $(TESTS)

@@ -1,0 +1,1 @@
+void getFDs(int*, int*);

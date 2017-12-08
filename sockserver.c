@@ -1,3 +1,5 @@
+#include "sockserver.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -5,6 +7,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <unistd.h>
+
 
 typedef struct {
   int fd;
@@ -87,13 +90,7 @@ int start_client(){
   return sock_fd;
 }
 
-/**
- * [main description]
- * @param  argc [description]
- * @param  argv [description]
- * @return      [description]
- */
-int main(int argc, char * argv[]){
+void getFDs(int* server_fd, int* client_fd){
   pthread_t thread_id;
   shared_data data;
   data.fd = -1914;
@@ -103,19 +100,19 @@ int main(int argc, char * argv[]){
   if( pthread_create(&thread_id, NULL, &start_server, &data) != 0)
   {
     printf("pthread_create error\n");
-    return -1;
+    return;
   }
 
   //sleep(1);
   pthread_mutex_lock( &(data.mutex) );
-  int client_fd = start_client();
+  *client_fd = start_client();
 
   sleep(1);
 
-  printf("Client fd: %d\n", client_fd);
-  printf("Server fd: %d\n", data.fd);
+  *server_fd = data.fd;
+  printf("Client fd: %d\n", *client_fd);
+  printf("Server fd: %d\n", *server_fd);
 
-  close(client_fd);
-  close(data.fd);
-  return 0;
 }
+/*
+*/
