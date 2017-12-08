@@ -8,17 +8,15 @@ TESTS=tests
 
 all: test
 
-test: $(MAIN).o $(SRV).o $(TESTS).c
-	$(CC) $(LDFLAGS) $(MAIN).o $(SRV).o $(TESTS).c -o $(TESTS)
+test: $(MAIN) $(SRV) $(TESTS).c
+	$(CC) $(LDFLAGS) obj/*.o $(TESTS).c -o $(TESTS)
 	time ./$(TESTS)
 
+$(MAIN): $(MAIN).c
+	$(CC) -c $(MAIN).c -o obj/$(MAIN).o
 
-$(MAIN).o: $(MAIN).c
-	$(CC) $(MAIN).c -c
-
-$(SRV).o: $(SRV).c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRV).c -c
-
+$(SRV): $(SRV).c
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $(SRV).c -o obj/$(SRV).o
 
 clean:
-	@rm -f *.o $(TESTS)
+	@rm -f obj/*.o $(TESTS)
