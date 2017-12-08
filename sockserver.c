@@ -49,6 +49,8 @@ void* start_server(void* args){
 
   struct sockaddr_in client_address;
   socklen_t client_address_len = 0;
+
+  pthread_mutex_unlock( &(data->mutex) );
   data->fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
   
   // Returning file descriptor value in fd  
@@ -97,14 +99,15 @@ int main(int argc, char * argv[]){
   data.fd = -1914;
   data.mutex = PTHREAD_MUTEX_INITIALIZER;
 
+  pthread_mutex_lock( &(data.mutex) );
   if( pthread_create(&thread_id, NULL, &start_server, &data) != 0)
   {
     printf("pthread_create error\n");
     return -1;
   }
 
-  sleep(1);
-
+  //sleep(1);
+  pthread_mutex_lock( &(data.mutex) );
   int client_fd = start_client();
 
   sleep(1);
