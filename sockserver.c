@@ -114,7 +114,6 @@ void getFDs(const int port, int* server_fd, int* client_fd){
   pthread_mutex_lock( &(data.mutex) );
   *client_fd = start_client(port);
 
-  usleep(1000);
-
+  pthread_join(thread_id, NULL);
   *server_fd = data.fd;
 }
