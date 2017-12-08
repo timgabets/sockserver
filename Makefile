@@ -6,17 +6,19 @@ SRV=sockserver
 MAIN=tests-main
 TESTS=tests
 
-$(MAIN).o:
-	$(CC) $(MAIN).c -c
+all: test
 
-$(SRV).o:
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRV).c -c
-
-test: $(MAIN).o $(SRV).o
+test: $(MAIN).o $(SRV).o $(TESTS).c
 	$(CC) $(LDFLAGS) $(MAIN).o $(SRV).o $(TESTS).c -o $(TESTS)
 	time ./$(TESTS)
 
-all: test
+
+$(MAIN).o: $(MAIN).c
+	$(CC) $(MAIN).c -c
+
+$(SRV).o: $(SRV).c
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SRV).c -c
+
 
 clean:
 	@rm -f *.o $(TESTS)

@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <unistd.h>
-
+#include "errno.h"
 
 typedef struct {
   int fd;
@@ -22,14 +22,17 @@ typedef struct {
 void* start_server(void* args){
   shared_data* data = (shared_data*) args;
 
-  printf("starting server\n");
-
-  int srv_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-  if(srv_sock_fd < 0)
+  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  if(sockfd < 0)
   {
     printf("server socket() error\n");
+    pthread_mutex_unlock( &(data->mutex) );
     return NULL;
   }
+
+  int enable = 1;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+    printf("setsockopt(SO_REUSEADDR) failed");
 
   struct sockaddr_in sa;
   memset(&sa, 0, sizeof(sa));
@@ -37,25 +40,30 @@ void* start_server(void* args){
   sa.sin_port = htons(29493);
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
-  if ((bind(srv_sock_fd, (struct sockaddr *)&sa, sizeof(sa))) < 0) {
-     printf("server bind() error\n");
+  if ((bind(sockfd, (struct sockaddr *)&sa, sizeof(sa))) < 0) {
+     printf("bind() error: %s\n", strerror(errno));
+     pthread_mutex_unlock( &(data->mutex) );
+     close(sockfd);
      return NULL;
   }
 
   int wait_size = 1;  // maximum number of waiting clients
-  if (listen(srv_sock_fd, wait_size) < 0) {
+  if (listen(sockfd, wait_size) < 0) {
      printf("server listen() error\n");
+     pthread_mutex_unlock( &(data->mutex) );
+     close(sockfd);
      return NULL;
   } else {
-     printf("listening on port 29493, fd: %d\n", srv_sock_fd);
+     printf("listening on port 29493, fd: %d\n", sockfd);
   }
 
   struct sockaddr_in client_address;
   socklen_t client_address_len = 0;
 
   pthread_mutex_unlock( &(data->mutex) );
-  data->fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
-  
+  data->fd = accept(sockfd, (struct sockaddr *)&client_address, &client_address_len);
+ 
+  close(sockfd); 
   // Returning file descriptor value in fd  
   pthread_exit(NULL);
 }
@@ -65,6 +73,7 @@ void* start_server(void* args){
  * @return [description]
  */
 int start_client(){
+  printf("Starting client\n");
   int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(sock_fd < 0)
   {
@@ -103,16 +112,11 @@ void getFDs(int* server_fd, int* client_fd){
     return;
   }
 
-  //sleep(1);
   pthread_mutex_lock( &(data.mutex) );
+  sleep(1);
   *client_fd = start_client();
 
   sleep(1);
 
   *server_fd = data.fd;
-  printf("Client fd: %d\n", *client_fd);
-  printf("Server fd: %d\n", *server_fd);
-
 }
-/*
-*/

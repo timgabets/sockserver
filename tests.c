@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 
-TEST_CASE( "fds received", "[factorial]" ) {
+TEST_CASE( "should receive file descriptors received", "" ) {
   int server_fd = -1;
   int client_fd = -1;
 
