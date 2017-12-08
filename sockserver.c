@@ -7,13 +7,14 @@
 #include <unistd.h>
 
 int srv_sock_fd;
-int server_fd = -300;
 
 /**
  * [start_server description]
  * @param arg [description]
  */
-void* start_server(void* arg){  
+void* start_server(void* data){
+  int* fd = (int*) data;
+
   printf("starting server\n");
 
   srv_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -44,10 +45,10 @@ void* start_server(void* arg){
 
   struct sockaddr_in client_address;
   socklen_t client_address_len = 0;
-  server_fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
+  *fd = accept(srv_sock_fd, (struct sockaddr *)&client_address, &client_address_len);
   
-  // Returning file descriptor value in fd
-  printf("Connected client: %d\n", server_fd);
+  // Returning file descriptor value in fd  
+  pthread_exit(NULL);
 }
 
 /**
@@ -88,22 +89,20 @@ int start_client(){
  */
 int main(int argc, char * argv[]){
   pthread_t thread_id;
+  int server_fd = -1914;
 
-  if( pthread_create(&thread_id, NULL, &start_server, NULL) != 0)
+  if( pthread_create(&thread_id, NULL, &start_server, &server_fd) != 0)
     printf("pthread_create error\n");
 
-  sleep(2);
+  sleep(1);
 
   int client_fd = start_client();
+
+  sleep(1);
+
   printf("Client fd: %d\n", client_fd);
   printf("Server fd: %d\n", server_fd);
 
-  sleep(10);
-
   close(client_fd);
-  close(server_fd);
-
-
-
   return 0;
 }
