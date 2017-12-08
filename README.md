@@ -1,7 +1,6 @@
 # sockserver
 
-A simple utility to get the file descriptors of the listening TCP server and the TCP client connected to that server:
-
+A simple utility to get the file descriptors of the listening TCP server and the TCP client connected to this server:
 ``` C++
 int server_fd, client_fd;
 
