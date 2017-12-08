@@ -6,7 +6,6 @@
 #include <pthread.h>
 #include <unistd.h>
 
-int srv_sock_fd;
 
 /**
  * [start_server description]
@@ -17,7 +16,7 @@ void* start_server(void* data){
 
   printf("starting server\n");
 
-  srv_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+  int srv_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(srv_sock_fd < 0)
   {
     printf("server socket() error\n");
