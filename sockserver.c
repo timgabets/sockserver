@@ -29,5 +29,14 @@ int main(int argc, char * argv[]){
      return -3;
   }
 
+  struct sockaddr_in client_address;
+  socklen_t client_address_len = 0;
+  int sock;
+  if( (sock = accept(listen_sock_fd, (struct sockaddr *)&client_address, &client_address_len)) < 0)
+  {
+     printf("accept() error");
+     return -4;
+  }
+
   return 0;
 }
