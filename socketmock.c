@@ -97,6 +97,15 @@ int start_client(int port){
   return sock_fd;
 }
 
+/**
+ * [getFDs get the file descriptors of the listening TCP server and the TCP client connected to this server.
+ *                   
+ *                   IMPORTANT: the server_fd and client_fd file descriptors must be closed in the calling function]
+ *                   
+ * @param port      [the port TCP server will be listening to]
+ * @param server_fd [returned file descriptor of the server, which is ready for reading from socket using recv()]
+ * @param client_fd [returned file descriptor of the connected client, ready for sending data over it using send()]
+ */
 void getFDs(const int port, int* server_fd, int* client_fd){
   pthread_t thread_id;
   shared_data data;
