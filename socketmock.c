@@ -102,7 +102,7 @@ void getFDs(const int port, int* server_fd, int* client_fd){
   shared_data data;
   data.port = port; 
   data.fd = -1914;
-  data.mutex = PTHREAD_MUTEX_INITIALIZER;
+  pthread_mutex_init(&data.mutex, NULL);
 
   pthread_mutex_lock( &(data.mutex) );
   if( pthread_create(&thread_id, NULL, &start_server, &data) != 0)
