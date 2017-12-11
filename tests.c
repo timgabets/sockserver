@@ -1,5 +1,5 @@
 #include "include/catch.hpp"
-#include "include/sockserver.h"
+#include "include/socketmock.h"
 
 #include <unistd.h>
 #include <string.h>

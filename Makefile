@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-std=c++11 -g
 LDFLAGS=-pthread
 
-SRV=sockserver
+SRV=socketmock
 MAIN=tests-main
 TESTS=tests
 

@@ -1,4 +1,4 @@
-# sockserver
+# socketmock
 
 A simple utility to get the file descriptors of the listening TCP server and the TCP client connected to this server:
 ``` C++
